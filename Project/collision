@@ -1,0 +1,112 @@
+class Player
+{
+    constructor(x, y)
+    {
+        this.width = 50;
+        this.height = 50;
+        this.xPos = x;
+        this.yPos = y;
+        this.jumpheight = 10;
+        this.jumping = true;
+        this.movementSpeed = 10;
+        this.gravity = 25;
+        //COLLISION
+        this.rightCollide = false;
+        this.leftCollide = false;
+        this.upCollide = false;
+        this.downCollide = false;
+    }
+
+    update()
+    {
+        //CHECK FOR COLLSIION
+        this.collision()
+        if(!this.downCollide)
+        {
+            this.yPos += this.gravity;
+        }
+        console.log(this.rightCollide);
+        //RIGHT
+        if(controller.right && !this.rightCollide)
+        {
+            this.xPos += this.movementSpeed;
+        }
+        //LEFT
+        if(controller.left && !this.leftCollide)
+        {   
+            this.xPos -= this.movementSpeed;
+        }
+        //UP
+        if(controller.up && !this.upCollide && !this.jumping)
+        {
+            this.yPos -= this.jumpheight
+            this.jumping = true;
+        }  
+        //CHANGE X AND Y
+        this.draw()
+    }
+
+    collision()
+    {
+        //After a week and a half or so, collision detection finally works. it may not be the best solution but i dont care anymore   
+        for(let i of levelObjects)
+        {
+            //UP
+            if(this.xPos < i.xPos + i.width && this.xPos + this.width > i.xPos && this.yPos + 1 < i.yPos + i.height && this.yPos + this.height > i.yPos)
+            {
+                this.upCollide = true
+                break;
+            }
+            else
+            {
+                this.upCollide = false;
+            }
+        }
+        for(let i of levelObjects)
+        {
+            //DOWN
+            if(this.xPos < i.xPos + i.width && this.xPos + this.width > i.xPos && this.yPos < i.yPos + i.height && this.yPos + this.height + this.gravity > i.yPos)
+            {
+                this.downCollide = true;
+                this.jumping = false;
+                break;
+            }
+            else
+            {
+                this.downCollide = false;
+            }
+        }
+        for(let i of levelObjects)
+        {
+            //LEFT
+            if(this.xPos - this.movementSpeed < i.xPos + i.width && this.xPos + this.width > i.xPos && this.yPos < i.yPos + i.height && this.yPos + this.height > i.yPos)
+            {
+                this.leftCollide = true;
+                break;
+            }
+            else
+            {
+                this.leftCollide = false;
+            }            
+        }
+        for(let i of levelObjects)
+        {
+            //RIGHT
+            if(this.xPos < i.xPos + i.width && this.xPos + this.width + this.movementSpeed > i.xPos && this.yPos < i.yPos + i.height && this.yPos + this.height > i.yPos)
+            {
+                this.rightCollide = true;
+                break;
+            }
+            else
+            {
+                this.rightCollide = false;
+            }
+        }
+    }
+
+    draw()
+    {
+        playSpace.fillText(`Position: (${this.xPos.toFixed(0)}, ${this.yPos.toFixed(0)})`, 10, 20);
+        playSpace.fillRect(this.xPos, this.yPos, this.width, this.height);
+    }
+}
